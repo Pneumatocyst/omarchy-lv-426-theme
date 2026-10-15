@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
   "id": "lynwood.lv426-lock",
-  "name": "LV-426 Lock Screen",
-  "version": "1.0.1",
+  "name": "LV-426 / Cosmos Lock Screen",
+  "version": "1.1.0",
   "author": "lynwood (from the4rchangel Hackery Lock)",
   "license": "MIT",
-  "description": "Hackery Lock with a MU-TH-UR 6000 / Weyland-Yutani look while the LV-426 theme is active; the original Hackery look otherwise.",
+  "description": "Hackery Lock with a MU-TH-UR 6000 / Weyland-Yutani look while LV-426 is the theme, an EVA helmet boot sequence while The Cosmos is the theme, and the original Hackery look otherwise.",
   "kinds": [
     "service"
   ],

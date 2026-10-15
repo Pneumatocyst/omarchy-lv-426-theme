@@ -87,7 +87,8 @@ Item {
   }
 
   function forcePasswordFocus() {
-    passwordInput.forceActiveFocus()
+    if (root.cosmos) cosmosView.input.forceActiveFocus()
+    else passwordInput.forceActiveFocus()
   }
 
   function clearPassword() {
@@ -96,9 +97,10 @@ Item {
 
   function syncPasswordText() {
     var next = root.boundPassword(passwordText)
-    if (passwordInput.text === next) return
+    if (passwordInput.text === next && cosmosView.input.text === next) return
     syncingPasswordText = true
-    passwordInput.text = next
+    if (passwordInput.text !== next) passwordInput.text = next
+    if (cosmosView.input.text !== next) cosmosView.input.text = next
     syncingPasswordText = false
   }
 
@@ -168,7 +170,22 @@ Item {
     }
   }
 
-  readonly property bool lv426: String(themeStdout.text || "").trim() === "lv-426"
+  // Watched, not read once: this view outlives theme switches.
+  FileView {
+    id: themeFile
+    path: (Quickshell.env("HOME") || "") + "/.local/state/omarchy/current/theme.name"
+    watchChanges: true
+    printErrors: false
+    onFileChanged: reload()
+  }
+
+  readonly property string themeName: {
+    var watched = String(themeFile.text() || "").trim()
+    return watched.length > 0 ? watched : String(themeStdout.text || "").trim()
+  }
+  readonly property bool lv426: themeName === "lv-426"
+  // THE COSMOS: helmet boot sequence (CosmosView.qml) replaces the whole stage.
+  readonly property bool cosmos: themeName === "the-cosmos"
 
   readonly property string resolvedHost: {
     var text = String(hostStdout.text || "").trim()
@@ -179,11 +196,12 @@ Item {
     id: stage
     anchors.fill: parent
     color: hackBg
+    visible: !root.cosmos
 
     Image {
       id: wallpaper
       anchors.fill: parent
-      source: root.loadBackground ? root.fileUrl(root.backgroundPath) : ""
+      source: root.loadBackground && !root.cosmos ? root.fileUrl(root.backgroundPath) : ""
       fillMode: Image.PreserveAspectCrop
       asynchronous: true
       cache: false
@@ -234,7 +252,7 @@ Item {
 
         SequentialAnimation on rainOffset {
           loops: Animation.Infinite
-          running: (root.loadBackground || root.inputEnabled) && rainCol.height > 0
+          running: (root.loadBackground || root.inputEnabled) && rainCol.height > 0 && !root.cosmos
           NumberAnimation {
             from: -520
             to: rainCol.height + 140
@@ -665,13 +683,37 @@ Item {
       opacity: 0
       SequentialAnimation on opacity {
         loops: Animation.Infinite
-        running: true
+        running: !root.cosmos
         NumberAnimation { from: 0; to: 0.012; duration: 90 }
         NumberAnimation { from: 0.012; to: 0; duration: 140 }
         PauseAnimation { duration: 2600 }
       }
     }
   }
+
+  CosmosView {
+    id: cosmosView
+    anchors.fill: parent
+    visible: root.cosmos
+    running: root.cosmos && (root.loadBackground || root.inputEnabled)
+    view: root
+    inputEnabled: root.inputEnabled
+    authenticatingPassword: root.authenticatingPassword
+    fingerprintConfigured: root.fingerprintConfigured
+    failureMessage: root.failureMessage
+    failedAttempts: root.failedAttempts
+    hostName: root.hostName
+
+    MouseArea {
+      anchors.fill: parent
+      z: -1
+      hoverEnabled: true
+      onClicked: { root.requestWake(true); root.forcePasswordFocus() }
+      onPositionChanged: root.requestWake(false)
+    }
+  }
+
+  onCosmosChanged: if (inputEnabled) Qt.callLater(forcePasswordFocus)
 
   Timer {
     id: bootLogTimer
