@@ -6,7 +6,8 @@ program="$HOME/.config/omarchy/themes/lv-426/animation/wallpaper.py"
 log="${XDG_RUNTIME_DIR:-/tmp}/lv-426-$(id -u).log"
 # The living wallpaper needs its graded photo; without one Omarchy's static
 # background from backgrounds/ stays in place.
-[[ -f ${program%/*}/photo.png ]] &&
+if [[ -f ${program%/*}/photo.png ]]; then
   nohup env GSK_RENDERER=cairo python3 "$program" > "$log" 2>&1 < /dev/null &
+fi
 # Notification chirp watcher (exits by itself when the theme changes).
 nohup setsid "$HOME/.config/omarchy/themes/lv-426/bin/lv426-notify-chirp" >/dev/null 2>&1 < /dev/null &

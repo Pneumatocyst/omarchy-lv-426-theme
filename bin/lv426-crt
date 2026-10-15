@@ -37,13 +37,14 @@ shutdown_now() {
 }
 
 current=$(hyprctl getoption decoration:screen_shader -j 2>/dev/null | jq -r '.str // ""')
+[[ $current == "[[EMPTY]]" ]] && current=
 if [[ ${1:-} == off ]]; then
   [[ $current == "$shader" || $current == "$off_shader" ]] && shutdown_now
 elif [[ $current == "$shader" ]]; then
   sed 's/^#define POWER 1$/#define POWER -1/' "$shader" > "$off_shader"
   set_option decoration screen_shader "\"$off_shader\""
   hide_time_banner
-  omarchy-notification-send -g 󰍹 "CRT MODE" "DISENGAGED" >/dev/null 2>&1
+  omarchy-notification-send -g 󰍹 "CRT MODE" "DISENGAGED" >/dev/null 2>&1 9>&-
   # The collapse starts within a second of loading and lasts under one more.
   sleep 1.8
   shutdown_now
@@ -53,6 +54,6 @@ else
   set_option debug damage_tracking 0
   set_option decoration screen_shader "\"$shader\""
   hide_time_banner
-  (pw-play --volume 0.35 "$HOME/.config/omarchy/themes/lv-426/sounds/mother.wav" >/dev/null 2>&1 &)
-  omarchy-notification-send -g 󰍹 "CRT MODE" "ENGAGED // SUPER+ALT+C TO DISENGAGE" >/dev/null 2>&1
+  (pw-play --volume 0.35 "$HOME/.config/omarchy/themes/lv-426/sounds/mother.wav" >/dev/null 2>&1 9>&- &)
+  omarchy-notification-send -g 󰍹 "CRT MODE" "ENGAGED // SUPER+ALT+C TO DISENGAGE" >/dev/null 2>&1 9>&-
 fi
