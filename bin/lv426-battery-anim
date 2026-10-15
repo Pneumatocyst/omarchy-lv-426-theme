@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Kept as a status command for old shortcuts. Battery animation is disabled.
+case ${1:-status} in
+  status|off)
+    printf '%s\n' 'CHARGER ONLY — animated on external power, still photo on battery.'
+    ;;
+  *)
+    printf '%s\n' 'Battery animation is disabled by your charger-only wallpaper setting.'
+    exit 1
+    ;;
+esac

@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Plays the MU-TH-UR chirp whenever a desktop notification arrives, while
+# LV-426 is the theme. Started by the theme-set/post-boot hooks; exits on its
+# own once another theme is selected. Single instance via flock.
+set -uo pipefail
+theme_file="$HOME/.local/state/omarchy/current/theme.name"
+sound="$HOME/.config/omarchy/themes/lv-426/sounds/notify.wav"
+lock="${XDG_RUNTIME_DIR:-/tmp}/lv-426-notify-$(id -u).lock"
+
+exec 9>"$lock"
+flock -n 9 || exit 0
+
+active() { [[ $(cat "$theme_file" 2>/dev/null) == lv-426 ]]; }
+active || exit 0
+
+trap 'pkill -P $$ -x dbus-monitor 2>/dev/null' EXIT
+last=0
+while IFS= read -r -t 30 line || { (($? > 128)) && active; }; do
+  active || break
+  [[ $line == *member=Notify* ]] || continue
+  now=$(date +%s%N)
+  # Throttle bursts to one chirp per 700 ms.
+  if (( (now - last) / 1000000 > 700 )); then
+    last=$now
+    pw-play --volume 0.3 "$sound" >/dev/null 2>&1 &
+  fi
+done < <(dbus-monitor --session "type='method_call',interface='org.freedesktop.Notifications',member='Notify'" 2>/dev/null)

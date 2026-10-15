@@ -1,0 +1,40 @@
+# LV-426 / MU-TH-UR 6000 prompt. Used only while LV-426 is active
+# (terminal/startup.bash points STARSHIP_CONFIG here).
+add_newline = true
+command_timeout = 200
+format = """[▌MU/TH/UR](bold #6FE39A) [::](#4F5E55) $directory$git_branch$git_status$cmd_duration
+$character"""
+
+[character]
+success_symbol = "[>](bold #6FE39A)"
+error_symbol = "[!](bold #D9534A)"
+
+[directory]
+style = "#B8C4BC"
+truncation_length = 3
+truncation_symbol = "…/"
+repo_root_style = "bold #E2EEE6"
+repo_root_format = "[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) "
+format = "[$path]($style)[$read_only]($read_only_style) "
+
+[git_branch]
+format = "[SECTOR ](#4F5E55)[$branch]($style) "
+style = "#E8A33D"
+
+[git_status]
+format = '[$all_status$ahead_behind]($style)'
+style = "#E8A33D"
+ahead = "⇡${count} "
+behind = "⇣${count} "
+diverged = "⇕⇡${ahead_count}⇣${behind_count} "
+conflicted = "[CONFLICT ](bold #D9534A)"
+untracked = "? "
+modified = "* "
+staged = "+ "
+stashed = ""
+renamed = ""
+deleted = "- "
+
+[cmd_duration]
+min_time = 2000
+format = "[ELAPSED $duration](#6E7C74) "

@@ -1,0 +1,57 @@
+# LV-426 / MU-TH-UR 6000 btop theme
+# Motion-tracker phosphor: quiet readings glow green, load heats through
+# Weyland-Yutani amber to alarm red.
+
+theme[main_bg]="#050806"
+theme[main_fg]="#B8C4BC"
+theme[title]="#6FE39A"
+theme[hi_fg]="#E8A33D"
+theme[selected_bg]="#12301F"
+theme[selected_fg]="#A6FFC4"
+theme[inactive_fg]="#3A463F"
+theme[graph_text]="#9AA89F"
+theme[meter_bg]="#0E1612"
+theme[proc_misc]="#6FE39A"
+
+# Box outlines: dim phosphor for the machine, amber for the process list
+theme[cpu_box]="#2E6B47"
+theme[mem_box]="#2E6B47"
+theme[net_box]="#2E6B47"
+theme[proc_box]="#6B5226"
+theme[div_line]="#1E2A24"
+
+theme[temp_start]="#6FE39A"
+theme[temp_mid]="#E8A33D"
+theme[temp_end]="#D9534A"
+
+theme[cpu_start]="#2E6B47"
+theme[cpu_mid]="#6FE39A"
+theme[cpu_end]="#E8A33D"
+
+theme[free_start]="#1E4A30"
+theme[free_mid]="#3F9A66"
+theme[free_end]="#6FE39A"
+
+theme[cached_start]="#24505A"
+theme[cached_mid]="#3F8F86"
+theme[cached_end]="#5FC9B8"
+
+theme[available_start]="#6B5226"
+theme[available_mid]="#B07E2E"
+theme[available_end]="#E8A33D"
+
+theme[used_start]="#3F9A66"
+theme[used_mid]="#E8A33D"
+theme[used_end]="#D9534A"
+
+theme[download_start]="#1E4A30"
+theme[download_mid]="#3F9A66"
+theme[download_end]="#A6FFC4"
+
+theme[upload_start]="#6B5226"
+theme[upload_mid]="#B07E2E"
+theme[upload_end]="#FFC266"
+
+theme[process_start]="#3F9A66"
+theme[process_mid]="#E8A33D"
+theme[process_end]="#D9534A"

@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# Toggle LV-426 CRT mode (Hyprland screen shader). `lv426-crt off` forces off
+# at once, without the power-down animation.
+# The rolling scanlines read the shader's `time` uniform, which Hyprland only
+# feeds with debug:damage_tracking off, so that is switched off while CRT
+# mode runs and restored afterwards.
+# Engaging warms the tube up and disengaging collapses it to a dot: both are
+# done in crt.frag (POWER 1 / -1); the power-off copy is generated here.
+set -uo pipefail
+shader="$HOME/.config/omarchy/themes/lv-426/crt/crt.frag"
+runtime="${XDG_RUNTIME_DIR:-/tmp}"
+off_shader="$runtime/lv-426-crt-off.frag"
+saved="$runtime/lv-426-crt-damage-tracking"
+
+# One toggle at a time: a press during the power-down animation is ignored.
+exec 9>"$runtime/lv-426-crt.lock"
+if [[ ${1:-} == off ]]; then flock 9; else flock -n 9 || exit 0; fi
+
+set_option() { # section key value
+  hyprctl eval "hl.config({ $1 = { $2 = $3 } })" >/dev/null 2>&1 ||
+    hyprctl keyword "$1:$2" "$3" >/dev/null
+}
+
+hide_time_banner() {
+  # Hyprland always raises a red banner for shaders that read `time`, even with
+  # damage tracking already off. Clear it, unless there are real config errors.
+  sleep 0.3
+  [[ -z $(hyprctl configerrors 2>/dev/null | tr -d '[:space:]') ]] && hyprctl seterror disable >/dev/null
+}
+
+shutdown_now() {
+  set_option decoration screen_shader '""'
+  if [[ -f $saved ]]; then
+    set_option debug damage_tracking "$(< "$saved")"
+    rm -f "$saved"
+  fi
+}
+
+current=$(hyprctl getoption decoration:screen_shader -j 2>/dev/null | jq -r '.str // ""')
+if [[ ${1:-} == off ]]; then
+  [[ $current == "$shader" || $current == "$off_shader" ]] && shutdown_now
+elif [[ $current == "$shader" ]]; then
+  sed 's/^#define POWER 1$/#define POWER -1/' "$shader" > "$off_shader"
+  set_option decoration screen_shader "\"$off_shader\""
+  hide_time_banner
+  omarchy-notification-send -g 󰍹 "CRT MODE" "DISENGAGED" >/dev/null 2>&1
+  # The collapse starts within a second of loading and lasts under one more.
+  sleep 1.8
+  shutdown_now
+else
+  dt=$(hyprctl getoption debug:damage_tracking -j 2>/dev/null | jq -r '.int // 2')
+  [[ -f $saved ]] || echo "$(( dt == 0 ? 2 : dt ))" > "$saved"
+  set_option debug damage_tracking 0
+  set_option decoration screen_shader "\"$shader\""
+  hide_time_banner
+  (pw-play --volume 0.35 "$HOME/.config/omarchy/themes/lv-426/sounds/mother.wav" >/dev/null 2>&1 &)
+  omarchy-notification-send -g 󰍹 "CRT MODE" "ENGAGED // SUPER+ALT+C TO DISENGAGE" >/dev/null 2>&1
+fi

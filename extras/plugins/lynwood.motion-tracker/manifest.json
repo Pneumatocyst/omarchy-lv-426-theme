@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "lynwood.motion-tracker",
+  "name": "M314 Motion Tracker",
+  "version": "1.0.0",
+  "author": "lynwood",
+  "description": "LV-426 motion tracker: CPU load closes the range. Only shows while LV-426 is the theme.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "MotionTracker.qml"
+  },
+  "barWidget": {
+    "displayName": "Motion Tracker",
+    "description": "Animated M314 tracker driven by CPU load (LV-426 theme)",
+    "category": "System",
+    "allowMultiple": false
+  }
+}

@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+*.bak.*
+# Bring-your-own art (see README > Wallpaper)
+animation/photo.png
+animation/creatures.mp4
+backgrounds/*
+!backgrounds/.gitkeep

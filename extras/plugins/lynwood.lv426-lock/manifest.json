@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "lynwood.lv426-lock",
+  "name": "LV-426 Lock Screen",
+  "version": "1.0.1",
+  "author": "lynwood (from the4rchangel Hackery Lock)",
+  "license": "MIT",
+  "description": "Hackery Lock with a MU-TH-UR 6000 / Weyland-Yutani look while the LV-426 theme is active; the original Hackery look otherwise.",
+  "kinds": [
+    "service"
+  ],
+  "keepLoaded": true,
+  "entryPoints": {
+    "service": "Service.qml"
+  },
+  "omarchy": {
+    "clonedFrom": "omarchy.lock"
+  }
+}

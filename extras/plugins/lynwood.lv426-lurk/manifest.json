@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "lynwood.lv426-lurk",
+  "name": "LV-426 Lurker",
+  "version": "1.0.0",
+  "author": "lynwood",
+  "description": "While LV-426 is the theme, leaving the machine idle lets something close in: motion tracker pings get nearer and faster until the screensaver, and the klaxon sounds as it locks.",
+  "kinds": [
+    "service"
+  ],
+  "keepLoaded": true,
+  "entryPoints": {
+    "service": "Service.qml"
+  }
+}
